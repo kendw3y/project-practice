@@ -1,7 +1,7 @@
-import { IsIn, IsString } from "class-validator";
+import { IsEnum } from "class-validator";
+import { TaskStatus } from "../entities/task.entity";
 
 export class UpdateTaskDto {
-    @IsString()
-    @IsIn(['pending', 'done'])
-    status!: string;
+    @IsEnum(TaskStatus)
+    status!: TaskStatus;
 }

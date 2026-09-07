@@ -9,7 +9,4 @@ export class CreateTaskDto {
   @MinLength(10)
   description!: string;
 
-  @IsOptional()
-  @IsIn(['pending', 'done'])
-  status?: string;
 }

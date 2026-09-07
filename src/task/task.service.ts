@@ -1,22 +1,32 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { Task, TaskStatus } from './entities/task.entity';
+import { GetTaskQueryDto } from './dto/get-task-query.dto';
 
 @Injectable()
 export class TaskService {
-  private tasks = [
-    {
-      id: 1,
-      title: 'Titulo 1',
-      description: 'Este es el primer titulo de todos',
-    },
-  ];
+  private tasks: Task[] = [];
 
-  getAll() {
-    return this.tasks;
+  getAll(query: GetTaskQueryDto) {
+    let result = [...this.tasks]
+    if(query.status){
+      result = this.tasks.filter((v) => v.status === query.status);
+    }
+    if(query.search){
+      const searchMatch = query.search.toLowerCase()
+      result = result.filter((task)=>{
+
+        const titleMatch = task.title.toLowerCase().includes(searchMatch)
+        const descriptionMatch = task.description.toLowerCase().includes(searchMatch)
+
+        return titleMatch || descriptionMatch
+      })
+    }
+    return result
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     const task = this.tasks.find((task) => task.id === id);
     if (!task) {
       throw new NotFoundException(`Task with id ${id} not found`);
@@ -25,15 +35,18 @@ export class TaskService {
   }
 
   createTask(task: CreateTaskDto) {
-    const newTask = {
-      id: this.tasks.length + 1,
-      ...task,
+    const newTask: Task = {
+      id: crypto.randomUUID(),
+      title: task.title,
+      description: task.description,
+      status: TaskStatus.PENDING,
+      createdAt: new Date(),
     };
     this.tasks.push(newTask);
     return newTask;
   }
 
-  deleteTask(id: number) {
+  deleteTask(id: string) {
     const taskIndex = this.tasks.findIndex((task) => task.id === id);
     if (taskIndex === -1) {
       throw new NotFoundException(`Task with id ${id} not found`);
@@ -42,7 +55,7 @@ export class TaskService {
     return 'Task deleted successfully';
   }
 
-  updateTask(id: number, task: UpdateTaskDto) {
+  updateTask(id: string, task: UpdateTaskDto) {
     const taskIndex = this.tasks.findIndex((task) => task.id === id);
     if (taskIndex === -1) {
       throw new NotFoundException(`Task with id ${id} not found`);
