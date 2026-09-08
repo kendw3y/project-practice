@@ -3,11 +3,11 @@ import { TaskModule } from './task/task.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformResponseInterceptor } from './common/transform-response/transform-response.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception/http-exception.filter';
-
+import {MongooseModule} from "@nestjs/mongoose"
 
 
 @Module({
-  imports: [TaskModule],
+  imports: [TaskModule,MongooseModule.forRoot('mongodb://karel:12345678@monguito:27017/mongodb?authSource=admin')],
   controllers: [],
   providers: [
     {
