@@ -3,11 +3,21 @@ import { TaskModule } from './task/task.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformResponseInterceptor } from './common/transform-response/transform-response.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception/http-exception.filter';
-import {MongooseModule} from "@nestjs/mongoose"
-
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [TaskModule,MongooseModule.forRoot('mongodb://karel:12345678@monguito:27017/mongodb?authSource=admin')],
+  imports: [TaskModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'karel',
+      password: '12345678',
+      database: 'my_db',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+    })
+  ],
   controllers: [],
   providers: [
     {

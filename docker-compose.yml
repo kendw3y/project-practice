@@ -1,22 +1,25 @@
 services:
-  nestjs:
-    build:
-      context: .
-      args:
-        - HTTP_PROXY=http://karelmb:03032766003@10.12.0.205:3128
-        - HTTPS_PROXY=http://karelmb:03032766003@10.12.0.205:3128
+  # nestjs:
+  #   build:
+  #     context: .
+  #     args:
+  #       - HTTP_PROXY=http://karelmb:03032766003@172.28.0.2:8080
+  #       - HTTPS_PROXY=http://karelmb:03032766003@172.28.0.2:8080
+  #   ports:
+  #     - "3000:3000"
+  #   links:
+  #     - monguito
+
+  postgres:
+    image: postgres:latest
     ports:
-      - "3000:3000"
-    links:
-      - monguito
-  monguito:
-    image: mongo
-    ports:
-      - "27017:27017"
+      - "5432:5432"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=karel
-      - MONGO_INITDB_ROOT_PASSWORD=12345678
+      - POSTGRES_USER=karel
+      - POSTGRES_PASSWORD=12345678
+      - POSTGRES_DB=my_db
     volumes:
-      - mongo-data:/data/db
+      - postgres_data:/var/lib/postgresql
 volumes:
-  mongo-data:
+  postgres_data:
+  # mongo-data:
