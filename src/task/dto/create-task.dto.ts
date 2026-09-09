@@ -1,4 +1,5 @@
-import { IsIn, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
+import { TaskStatus } from '../entities/task.entity';
 
 export class CreateTaskDto {
   @IsString()
@@ -8,5 +9,7 @@ export class CreateTaskDto {
   @IsString()
   @MinLength(10)
   description!: string;
+
+  
 
 }
