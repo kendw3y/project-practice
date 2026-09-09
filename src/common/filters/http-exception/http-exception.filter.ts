@@ -13,11 +13,10 @@ export class HttpExceptionFilter<T> implements ExceptionFilter {
     const exceptionResponse = exception instanceof HttpException
     ? exception.getResponse()
     : 'Error interno del servidor'
-    console.log(exception)
     const message = typeof exceptionResponse === 'string'
     ?exceptionResponse
     :(exceptionResponse as any).message || 'Error desconocido'
-
+    // console.log(exception)
     const errorResponse={
       success:false,
       statusCode:status,

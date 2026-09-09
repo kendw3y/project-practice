@@ -30,21 +30,30 @@ export class TaskService {
       total,
     };
   }
+  async findOneTask(id: number): Promise<Task> {
+    const task = await this.taskRepository.findOne({ where: { id } });
+    if (!task) {
+      throw new NotFoundException(`Not found task by id ${id}`);
+    }
+    return task;
+  }
   async createTask(createTaskDto: CreateTaskDto) {
-    const newTask = {
+    const newTask = this.taskRepository.create({
       ...createTaskDto,
       status: TaskStatus.PENDING,
-    };
+    });
     return this.taskRepository.save(newTask);
   }
-  async updateTask(id: number, taskUpdated: UpdateTaskDto) {
-    const task = this.taskRepository.findOneBy({id});
-    if(!task){
-      throw new NotFoundException(`Tarea con id ${id} no encontrado`)
-    }
-    return this.taskRepository.update({id},taskUpdated)
-      
-    
-    
+  async updateTask(id: number, taskUpdated: UpdateTaskDto): Promise<Task> {
+    const task = await this.findOneTask(id);
+    const updatedTask = Object.assign(task, taskUpdated);
+
+    return await this.taskRepository.save(updatedTask);
+  }
+  async removeTask(id: number) {
+    const result = await this.taskRepository.delete(id);
+    if (result.affected === 0)
+      throw new NotFoundException(`Not found task by id ${id}`);
+    return 'Task successfully removed. ';
   }
 }
