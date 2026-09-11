@@ -5,7 +5,9 @@ import { ValidationPipe } from '@nestjs/common';
 
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule,{
+    logger:['error','debug','log','verbose']
+  });
    const config = new DocumentBuilder()
     .setTitle('Task API')
     .setDescription('The task API description')

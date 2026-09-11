@@ -1,11 +1,11 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 
 @Catch()
 export class HttpExceptionFilter<T> implements ExceptionFilter {
   catch(exception: T, host: ArgumentsHost) {
     const ctx = host.switchToHttp()
     const response = ctx.getResponse()
-
+    const logger = new Logger(HttpExceptionFilter.name)
     const status = exception instanceof HttpException
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR
@@ -17,6 +17,8 @@ export class HttpExceptionFilter<T> implements ExceptionFilter {
     ?exceptionResponse
     :(exceptionResponse as any).message || 'Error desconocido'
     // console.log(exception)
+    logger.error(exception)
+     
     const errorResponse={
       success:false,
       statusCode:status,
