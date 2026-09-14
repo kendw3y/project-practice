@@ -4,6 +4,7 @@ import { RegisterDto } from './dto/register.dto';
 import { User } from 'src/users/entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { HashingService } from 'src/common/hashing/hashing.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -11,12 +12,10 @@ export class AuthService {
   constructor(
     readonly userService: UsersService,
     readonly hashService: HashingService,
+    readonly jwtService : JwtService,
   ) {}
 
   async register(registerUserDto: RegisterDto) {
-    this.logger.verbose(
-      `Registrando ususario: ${JSON.stringify(registerUserDto)}`,
-    );
     const user = await this.userService.findOneByEmail(registerUserDto.email);
     if (user) {
       throw new BadRequestException('User already exists');
@@ -35,6 +34,11 @@ export class AuthService {
     }
     const isValid = await this.hashService.compare(password,user.password)
     if(!isValid) throw new BadRequestException('Email or password incorrect')
-    return "Successful login"
+
+    const payload = { sub: user.id, email: user.email ,role: "user" };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+    }
   }
 }

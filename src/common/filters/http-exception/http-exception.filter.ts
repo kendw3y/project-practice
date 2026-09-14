@@ -17,7 +17,7 @@ export class HttpExceptionFilter<T> implements ExceptionFilter {
     ?exceptionResponse
     :(exceptionResponse as any).message || 'Error desconocido'
     // console.log(exception)
-    logger.error(exception)
+    
      
     const errorResponse={
       success:false,

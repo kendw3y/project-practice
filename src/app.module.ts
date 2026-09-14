@@ -7,21 +7,22 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { HashingService } from './common/hashing/hashing.service';
+import { ConfigModule } from '@nestjs/config';
+import { validationSchema } from './env.validation';
+import configuration from './config/configuration';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [TaskModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'karel',
-      password: '12345678',
-      database: 'my_db',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
-    }),
+    DatabaseModule,
     UsersModule,
-    AuthModule
+    AuthModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      validationSchema,
+      load: [configuration],
+    }),
   ],
   controllers: [],
   providers: [

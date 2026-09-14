@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TaskService } from './task.service';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { GetTaskQueryDto } from './dto/get-task-query.dto';
+import { AuthGuard } from 'src/auth/auth.gard';
 
 @Controller('task')
 export class TaskController {
@@ -16,6 +17,7 @@ export class TaskController {
   async findById(@Param('id') id:number){
     return this.taskService.findOneTask(id)
   }
+  @UseGuards(AuthGuard)
   @Post()
   createTask(@Body() newTask: CreateTaskDto) {
     return this.taskService.createTask(newTask);
